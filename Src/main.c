@@ -36,8 +36,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "robot.h"
+#include "bsp_log.h"
+#include "bsp_init.h"
 /* USER CODE END Includes */
-
+#include "remote_control.h"
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -67,7 +69,7 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+RC_ctrl_t *rc_recv_data;
 /* USER CODE END 0 */
 
 /**
@@ -119,20 +121,24 @@ int main(void)
   MX_CRC_Init();
   MX_DAC_Init();
   /* USER CODE BEGIN 2 */
-	RobotInit();
+	// RobotInit();
+  BSPInit();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
 
-  /* Start scheduler */
+  // /* Start scheduler */
   osKernelStart();
+
+  rc_recv_data = RemoteControlInit(&huart3);
 
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

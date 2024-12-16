@@ -143,33 +143,34 @@ static void MouseKeySet()
 /* 先暂停异常状态检测 */
 static void EmergencyHandler()
 {
-    // if (!RemoteControlIsOnline())
-    // { // 遥控器断开,机器人停止
-    //     lift_cmd_send.lift_mode = LIFT_OFF;
-    //     grab_cmd_send.grab_mode = GRAB_OFF;
-    //     chassis_cmd_send.chassis_mode = CHASSIS_OFF;
-    //     chassis_cmd_send.flip_mode = FLIP_OFF;
-    //     chassis_cmd_send.rescue_mode = RESCUE_OFF;
-    //     gimbal_cmd_send.gimbal_mode = GIMBAL_OFF;
-    //     robot_state = ROBOT_STOP;
-    // }
-    // else if (RemoteControlIsOnline() && switch_is_up(rc_data[TEMP].rc.switch_left))
-    // { // 左侧开关在[上]位置恢复为启动或慢速模式
-    //     chassis_cmd_send.chassis_mode = CHASSIS_FREE_MODE;
-    //     gimbal_cmd_send.gimbal_mode = GIMBAL_FREE_MODE;
-    //     lift_cmd_send.lift_mode = LIFT_SLOW;
-    //     grab_cmd_send.grab_mode = GRAB_SLOW;
-    //     chassis_cmd_send.flip_mode = FLIP_ON;
-    //     chassis_cmd_send.rescue_mode = RESCUE_ON;
-    //     robot_state = ROBOT_READY;
-    // }
+    if (!RemoteControlIsOnline())
+    { // 遥控器断开,机器人停止
+        lift_cmd_send.lift_mode = LIFT_OFF;
+        grab_cmd_send.grab_mode = GRAB_OFF;
+        chassis_cmd_send.chassis_mode = CHASSIS_OFF;
+        chassis_cmd_send.flip_mode = FLIP_OFF;
+        chassis_cmd_send.rescue_mode = RESCUE_OFF;
+        gimbal_cmd_send.gimbal_mode = GIMBAL_OFF;
+        robot_state = ROBOT_STOP;
+    }
+    else if (RemoteControlIsOnline() && switch_is_up(rc_data[TEMP].rc.switch_left))
+    { // 左侧开关在[上]位置恢复为启动或慢速模式
+        chassis_cmd_send.chassis_mode = CHASSIS_FREE_MODE;
+        gimbal_cmd_send.gimbal_mode = GIMBAL_FREE_MODE;
+        lift_cmd_send.lift_mode = LIFT_SLOW;
+        grab_cmd_send.grab_mode = GRAB_SLOW;
+        chassis_cmd_send.flip_mode = FLIP_ON;
+        chassis_cmd_send.rescue_mode = RESCUE_ON;
+        robot_state = ROBOT_READY;
+    }
 }
 
 
 
 void RobotCMDTask()
 {
-    SubGetMessage(lift_feed_sub, &lift_fetch_data);
+    // 获取传感器数据
+    // SubGetMessage(lift_feed_sub, &lift_fetch_data);
     SubGetMessage(chassis_feed_sub, &chassis_fetch_data);
 
     if (switch_is_down(rc_data[TEMP].rc.switch_left)) // 遥控器左侧开关状态为[下],遥控器控制
@@ -177,10 +178,12 @@ void RobotCMDTask()
     else if (switch_is_up(rc_data[TEMP].rc.switch_left)) // 遥控器左侧开关状态为[上],键盘控制
         MouseKeySet();
 
-    EmergencyHandler();
+    // 检测异常状态
+    // EmergencyHandler();
 
-    PubPushMessage(lift_cmd_pub, &lift_cmd_send);
-    PubPushMessage(grab_cmd_pub, &grab_cmd_send);
+    // 发送指令
+    // PubPushMessage(lift_cmd_pub, &lift_cmd_send);
+    // PubPushMessage(grab_cmd_pub, &grab_cmd_send);
     PubPushMessage(chassis_cmd_pub, &chassis_cmd_send);
-    PubPushMessage(gimbal_cmd_pub, &gimbal_cmd_send);
+    // PubPushMessage(gimbal_cmd_pub, &gimbal_cmd_send);
 }
